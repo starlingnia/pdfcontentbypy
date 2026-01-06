@@ -1,0 +1,17 @@
+[project]
+name = "pdfcontent"
+version = "0.1.0"
+description = "Auto fix PDF TOC"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pymupdf",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# --- 新增的部分 ---
+[tool.hatch.build.targets.wheel]
+packages = ["."]
