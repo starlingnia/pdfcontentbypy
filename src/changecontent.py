@@ -21,12 +21,31 @@ def auto_fix_toc(input_pdf, output_pdf):
         pending_level = 0
         
         def flush_title():
-            """如果有暂存的标题，把它写入 TOC 列表，并清空暂存区"""
             nonlocal pending_title, pending_level
             if pending_title and pending_level > 0:
-                # 把 ["Quantum", "Field..."] 拼接成 "Quantum Field..."
+                # 拼接标题
                 full_title = " ".join(pending_title).strip()
-                # 只有当标题不为空时才添加
+                
+                # --- 新增：过滤逻辑 ---
+                
+                # 1. 如果标题全是数字（例如抓取到了大号的页码 "1" 或 "123"）
+                if full_title.isdigit():
+                    print(f"  [已忽略纯数字] P{page_num+1}: {full_title}")
+                    # 清空状态并退出，不添加到目录
+                    pending_title = []
+                    pending_level = 0
+                    return
+
+                # 2. (可选) 如果是特定的乱码或不需要的词，加到这里的列表中
+                blacklist = ["123", "Contents", "Table of Contents", "目录"] 
+                if full_title in blacklist:
+                    print(f"  [已忽略黑名单] P{page_num+1}: {full_title}")
+                    pending_title = []
+                    pending_level = 0
+                    return
+
+                # --------------------
+
                 if full_title:
                     print(f"  [添加目录 L{pending_level}] P{page_num+1}: {full_title}")
                     toc.append([pending_level, full_title, page_num + 1])
@@ -34,7 +53,8 @@ def auto_fix_toc(input_pdf, output_pdf):
             # 重置状态
             pending_title = []
             pending_level = 0
-
+            return
+    
         # --- 遍历页面内容 ---
         for block in blocks:
             if "lines" not in block: continue
