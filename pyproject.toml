@@ -3,10 +3,9 @@ name = "pdfcontent"
 version = "0.1.0"
 description = "Auto fix PDF TOC"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 dependencies = [
-    "fitz>=0.0.1.dev2",
-    "pymupdf",
+    "pymupdf==1.27.2.2",
 ]
 
 [build-system]
