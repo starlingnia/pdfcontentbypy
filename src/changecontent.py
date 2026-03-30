@@ -1,5 +1,5 @@
 import fitz  # PyMuPDF
-
+import glob
 def auto_fix_toc(input_pdf, output_pdf):
     doc = fitz.open(input_pdf)
     toc = []  
@@ -100,7 +100,12 @@ def auto_fix_toc(input_pdf, output_pdf):
         doc.save(output_pdf)
         print(f"成功保存为: {output_pdf}")
 
+pdf_files = glob.glob('*.pdf', recursive=True)
+
 # --- 运行 ---
-input_file = "1000.pdf"  # 记得改这里
-output_file = "book.pdf"
-auto_fix_toc(input_file, output_file)
+if pdf_files:
+    input_file = pdf_files[0]  # 获取第一个PDF文件
+    output_file = input_file.replace('.pdf', '_fixed.pdf')
+    auto_fix_toc(input_file, output_file)
+else:
+    print("未找到PDF文件")
